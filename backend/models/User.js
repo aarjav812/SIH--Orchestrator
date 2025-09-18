@@ -49,7 +49,8 @@ const UserSchema = new mongoose.Schema(
         enum: ["junior", "mid", "senior", "lead"],
         required: true
       }, // For AI agent
-      currentProject: { type: String }, // For AI agent
+      currentProject: { type: String }, // Legacy single project (kept for backward compatibility)
+      currentProjects: { type: [String], default: [] }, // New: multiple current projects
       capacityHours: { 
         type: Number, 
         default: 40,
