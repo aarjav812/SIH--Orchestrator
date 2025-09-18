@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login / Register</title>
   <link rel="icon" href="icon.png">
+  <script src="../assets/js/app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -213,12 +214,8 @@
     </section>
   </main>
 
+  <script src="../assets/js/app.js"></script>
   <script>
-    // API Configuration - Change this for production
-    const API_BASE = window.location.hostname === 'localhost' 
-      ? 'http://localhost:5000/api/auth' 
-      : 'https://your-production-api.com/api/auth';
-
     const stars = [];
 
     function getStarCount() {
@@ -283,15 +280,6 @@
         void registerForm.offsetWidth;
         registerForm.classList.add("form-animate");
       }
-      
-      // Clear messages when toggling
-      document.getElementById('loginMessage').innerHTML = '';
-      document.getElementById('registerMessage').innerHTML = '';
-    }
-
-    function showMessage(elementId, message, isError = false) {
-      const messageEl = document.getElementById(elementId);
-      messageEl.innerHTML = `<div class="${isError ? 'error' : 'success'}">${message}</div>`;
     }
 
     // Login form handler
@@ -300,32 +288,24 @@
       
       const name = document.getElementById('loginName').value;
       const password = document.getElementById('loginPassword').value;
+      const submitBtn = e.target.querySelector('.btn');
+      const hideLoading = UI.showLoading(submitBtn);
 
       try {
-        const response = await fetch(`${API_BASE}/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, password })
-        });
+        const result = await Auth.login({ name, password });
 
-        const data = await response.json();
-
-        if (data.success) {
-          localStorage.setItem('token', data.user.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          showMessage('loginMessage', 'Login successful! Redirecting...', false);
-          
-          // Redirect to dashboard or home page
+        if (result.success) {
+          UI.showNotification('Login successful! Redirecting...', 'success');
           setTimeout(() => {
-            window.location.href = 'dashboard.html'; // Create this page
+            window.location.href = 'dashboard.html';
           }, 1500);
         } else {
-          showMessage('loginMessage', data.error || 'Login failed', true);
+          UI.showNotification(result.error || 'Login failed', 'error');
         }
       } catch (error) {
-        showMessage('loginMessage', 'Network error. Please try again.', true);
+        UI.showNotification('Network error. Please try again.', 'error');
+      } finally {
+        hideLoading();
       }
     });
 
@@ -337,38 +317,31 @@
       const lastName = document.getElementById('lastName').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('registerPassword').value;
+      const submitBtn = e.target.querySelector('.btn');
+      const hideLoading = UI.showLoading(submitBtn);
 
       if (password.length < 6) {
-        showMessage('registerMessage', 'Password must be at least 6 characters', true);
+        UI.showNotification('Password must be at least 6 characters', 'error');
+        hideLoading();
         return;
       }
 
       try {
-        const response = await fetch(`${API_BASE}/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ firstName, lastName, email, password })
-        });
+        const result = await Auth.register({ firstName, lastName, email, password });
 
-        const data = await response.json();
-
-        if (data.success) {
-          showMessage('registerMessage', 'Registration successful! You can now login.', false);
-          
-          // Clear form
+        if (result.success) {
+          UI.showNotification('Registration successful! You can now login.', 'success');
           document.getElementById('registerForm').reset();
-          
-          // Switch to login form after 2 seconds
           setTimeout(() => {
             toggleForms();
           }, 2000);
         } else {
-          showMessage('registerMessage', data.error || 'Registration failed', true);
+          UI.showNotification(result.error || 'Registration failed', 'error');
         }
       } catch (error) {
-        showMessage('registerMessage', 'Network error. Please try again.', true);
+        UI.showNotification('Network error. Please try again.', 'error');
+      } finally {
+        hideLoading();
       }
     });
   </script>

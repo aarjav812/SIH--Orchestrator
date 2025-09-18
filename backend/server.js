@@ -18,7 +18,14 @@ app.use(express.urlencoded({ extended: false }));
 
 // Enable CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    const allowed = process.env.CLIENT_URL;
+    if (!origin) return callback(null, true); // non-browser or same-origin
+    if (allowed && origin === allowed) return callback(null, true);
+    // allow any localhost port in dev
+    if (/^http:\/\/localhost:\d{2,5}$/.test(origin)) return callback(null, true);
+    return callback(new Error('CORS not allowed: ' + origin));
+  },
   credentials: true
 }));
 

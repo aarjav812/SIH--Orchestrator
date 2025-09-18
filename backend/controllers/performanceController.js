@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const PerformanceReview = require('../models/PerformanceReview');
 const Goal = require('../models/Goal');
+const User = require('../models/User'); // needed for manager/team queries
 
 // @desc    Get performance reviews for a user or their team
 // @route   GET /api/performance
