@@ -34,6 +34,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/leaves', require('./routes/leaves'));
 app.use('/api/performance', require('./routes/performance'));
+app.use('/api/ai', require('./routes/ai'));
+app.use('/api/chat', require('./routes/chat'));
 
 // Error handling middleware (should be last)
 app.use(errorHandler); // FIXED USAGE

@@ -9,7 +9,7 @@ frontend/
 │   ├── home page.html         # Landing page
 │   ├── login.html             # Authentication page
 │   ├── dashboard.html         # Main dashboard
-│   ├── ai-assistant.html      # AI assistant interface
+│   ├── [removed] ai-assistant.html  # Assistant is now embedded in dashboard
 │   ├── project_analysis_leader.html # Team leader view
 │   └── project_analysis_member.html # Team member view
 ├── assets/                    # Static assets

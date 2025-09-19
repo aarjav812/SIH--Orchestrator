@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Assistant - HRMS</title>
+<link rel="stylesheet" href="../assets/css/theme.css">
 <script src="../assets/js/app.js"></script>
 <style>
   body {
@@ -154,6 +155,7 @@
     .chat-area { border-left: none; flex: 1; height: calc(100vh - 60px); }
   }
 </style>
+<link rel="stylesheet" href="../assets/css/assistant.css">
 </head>
 <body>
 
@@ -188,7 +190,7 @@
     <div class="convo-list" id="convoList"></div>
     
     <!-- Logout button -->
-    <button onclick="Auth.logout()" style="background: #d32f2f; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: auto;">Logout</button>
+  <button class="logout-btn" style="background: #d32f2f; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: auto;">Logout</button>
   </div>
 
   <!-- Chat Area -->
@@ -320,17 +322,6 @@
       }
     });
   });
-</script>
-
-  document.getElementById('searchConvo').addEventListener('input', e => {
-    const search = e.target.value.toLowerCase();
-    Array.from(convoListEl.children).forEach((div, i) => {
-      const item = memory[i].text.toLowerCase();
-      div.style.display = item.includes(search) ? 'block' : 'none';
-    });
-  });
-
-  renderMessages();
 </script>
 
 </body>
