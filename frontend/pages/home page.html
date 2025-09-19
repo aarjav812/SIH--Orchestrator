@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>HRMS - Human Resource Management System</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
 
   <style>
     :root{
@@ -31,6 +32,7 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
+      gap:1.25rem;
       padding:1rem 2rem;
       background:var(--primary-color);
       position:sticky;
@@ -38,7 +40,7 @@
       z-index:1000;
     }
     .logo{color:var(--text-light); font-weight:700; font-size:1.25rem}
-    nav ul{display:flex; gap:1.25rem; list-style:none; margin:0; padding:0}
+  nav ul{display:flex; gap:1.25rem; list-style:none; margin:0; padding:0; margin-left:auto; flex:0 0 auto}
     nav a{color:var(--text-light); text-decoration:none; font-weight:600; transition:all .2s}
     nav a:hover{color:var(--accent-color); transform:translateY(-2px)}
 
@@ -73,8 +75,8 @@
     .hero-content h1{
       margin:0; font-size:3.4rem; line-height:1.3;
       font-weight:800;
-      background:linear-gradient(45deg,var(--text-light),var(--accent-color), #a78bfa);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background:linear-gradient(45deg,var(--text-light),var(--accent-color), #a78bfa);
+  background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
       white-space:nowrap; overflow:hidden; width:0ch;
       border-right:3px solid rgba(255,255,255,0.6);
       animation: typing 3s steps(30) 0.8s forwards, blink .7s step-end infinite;
@@ -225,6 +227,7 @@
 
   <!-- particles.js (CDN) -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../assets/js/app.js"></script>
   <script>
     // Initialize home page
     document.addEventListener('DOMContentLoaded', function() {

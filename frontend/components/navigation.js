@@ -60,7 +60,6 @@ class NavigationComponent {
 
     const baseItems = `
       <a href="dashboard.html" class="nav-item">Dashboard</a>
-      <a href="ai-assistant.html" class="nav-item">AI Assistant</a>
       <a href="project_analysis_member.html" class="nav-item">Projects</a>
     `;
 

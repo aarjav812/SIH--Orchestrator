@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const fetch = require('node-fetch');
 const { MongoDataHandler, DemoDataHandler } = require('../data/DataHandler');
 const { MyAgent } = require('../ai/Agent');
 
@@ -19,9 +20,37 @@ const chat = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: 'message is required' });
   }
 
+  // If Python AI service URL is configured, proxy the request there
+  const aiBase = process.env.AI_SERVICE_URL;
+  if (aiBase) {
+    try {
+      const url = new URL('/api/chat', aiBase).toString();
+      // Add a timeout to avoid hanging requests
+      const AbortController = global.AbortController || (await import('abort-controller')).default;
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 12000);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+        signal: controller.signal
+      });
+      clearTimeout(t);
+      const data = await response.json();
+      if (!response.ok) {
+        return res.status(response.status).json({ success: false, message: data?.detail || 'AI service error' });
+      }
+      // Normalize to our expected shape
+      return res.status(200).json({ success: true, data: { session_id: data.session_id, response: data.response } });
+    } catch (err) {
+      // Fall through to local agent on error
+      console.error('AI proxy error:', err.message || err);
+    }
+  }
+
+  // Fallback: use local Node agent implementation
   const handler = buildDataHandler();
   const agent = new MyAgent(handler);
-
   const result = await agent.handleChat(message, { user: req.user });
   res.status(200).json({ success: true, data: result });
 });
