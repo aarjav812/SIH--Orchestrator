@@ -5,8 +5,8 @@ const API_CONFIG = {
     if (['localhost','127.0.0.1'].includes(hostname) || window.location.protocol === 'file:') {
       return 'http://localhost:5000/api';
     } else {
-      // For network access, use your local IP
-      return 'http://10.106.87.236:5000/api';
+      // For network access, use the current host but with port 5000
+      return `http://${hostname}:5000/api`;
     }
   })(),
   
