@@ -9,141 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/app.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      background: #FEF7ED;
-      display: flex;
-      min-height: 100vh;
-      font-family: "Montserrat", sans-serif;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      background: #0F4C3A;
-      color: #FEF7ED;
-      display: flex;
-      flex-direction: column;
-      padding: 2rem 1rem;
-      min-height: 100vh;
-      position: fixed;
-      left: -100rem;
-      transition: left 0.3s ease;
-      box-shadow: 2px 0 12px rgba(0,0,0,0.3);
-      z-index: 1000;
-    }
-    .sidebar.active { left: 0; }
-    .sidebar h2 { text-align: center; margin-bottom: 2rem; font-size: 1.5rem; }
-    .sidebar a {
-      color: #374151;
-      text-decoration: none;
-      padding: 0.8rem 1rem;
-      margin: 0.5rem 0;
-      border-radius: 12px;
-      display: block;
-      font-weight: 500;
-      text-align: center;
-      transition: all 0.3s ease;
-      background: #84CC16;
-      box-shadow: 2px 2px 5px black;
-    }
-    .sidebar a:hover {
-      background: linear-gradient(180deg, #84CC16, #65a30d, #4d7c0f);
-      transform: translateX(5px);
-      box-shadow: 2px 4px 12px black;
-      color: #fff;
-    }
-
-    /* Toggle */
-    .menu-btn {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      font-size: 1.8rem;
-      cursor: pointer;
-      z-index: 1100;
-      background: #0F4C3A;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: none;
-    }
-    .close-btn {
-      font-size: 1.5rem;
-      color: #fff;
-      background: none;
-      border: none;
-      cursor: pointer;
-      align-self: flex-end;
-    }
-
-    /* Main Content */
-    .main-content {
-      margin-left: 0;
-      flex: 1;
-      padding: 2rem;
-      transition: margin-left 0.3s ease;
-    }
-    .sidebar.active ~ .main-content { margin-left: 0px; }
-
-    .member-cards {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .member-card {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      flex: 1 1 150px;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .member-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      background: linear-gradient(135deg, #84CC16, #22C55E);
-      color: #fff;
-    }
-
-    .analysis-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    .analysis-card h3 { margin-top: 0; color: #0F4C3A; }
-    .analysis-card ul { padding-left: 1.2rem; }
-
-    .assign-work {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-top: 2rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    .assign-work input, .assign-work select, .assign-work button {
-      padding: 0.5rem;
-      margin: 0.3rem 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    .assign-work button {
-      background: linear-gradient(45deg, #84CC16, #22C55E);
-      border: none;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
   <link rel="stylesheet" href="../assets/css/analysis.css">
+  <link rel="stylesheet" href="../assets/css/project_analysis_leader_style.css">
 </head>
 <body>
 
@@ -159,26 +26,24 @@
     </div>
     
     <a href="dashboard.html">Back to Projects</a>
-    <a href="project_analysis_member.html">Member View</a>
     
     <!-- Logout button -->
   <button class="logout-btn" style="background: #d32f2f; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: auto; width: 100%;">Logout</button>
   </div>
 
   <!-- Main -->
-  <div class="main-content">
-    <h1 style="color:#374151;">Project Alpha - Team Leader Analysis</h1>
+  <div class="main-content" style="margin-top:2.5rem;">
+    <h1 style="color:#1fad82;">Project Alpha - Team Leader Analysis</h1>
 
     <!-- Team Members -->
     <div class="member-cards" id="memberCards">
-      <div class="member-card" onclick="showMember('Aman')">Aman (Frontend)</div>
-      <div class="member-card" onclick="showMember('Sara')">Sara (Backend)</div>
-      <div class="member-card" onclick="showMember('Raj')">Raj (AI/ML)</div>
+      <!-- Loading placeholder for team members -->
+      <p style="color: #64748b; text-align: center; margin: 2rem;">Loading team members...</p>
     </div>
 
     <!-- Member Analysis -->
     <div class="analysis-card">
-      <h3 id="memberName">Select a member to view details</h3>
+      <h3 id="memberName" style="color:white;">Select a member to view details</h3>
       <h4>Assigned Work</h4>
       <ul id="assignedList"></ul>
       <h4>Completed Work</h4>
@@ -188,115 +53,31 @@
     <!-- Assign Work -->
     <div class="assign-work">
       <h3>Assign New Work</h3>
-      <input type="text" id="taskInput" placeholder="Enter task here"/>
+      <input type="text" id="taskInput" placeholder="Enter task description"/>
       <select id="memberSelect">
-        <option value="Aman">Aman</option>
-        <option value="Sara">Sara</option>
-        <option value="Raj">Raj</option>
+        <option value="">Select team member...</option>
       </select>
-      <button onclick="assignWork()">Assign</button>
+      <select id="prioritySelect">
+        <option value="low">Low Priority</option>
+        <option value="medium" selected>Medium Priority</option>
+        <option value="high">High Priority</option>
+      </select>
+      <button onclick="assignWork()">Assign Task</button>
+    </div>
+
+    <!-- Team Management -->
+    <div class="team-management" style="margin-top: 2rem;">
+      <h3>Team Management</h3>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button onclick="showRemoveMemberDialog()" style="background: #f59e0b; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+          Remove Member
+        </button>
+        <button onclick="showDeleteProjectDialog()" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+          Delete Project
+        </button>
+      </div>
     </div>
   </div>
-
-  <script>
-    // Initialize project analysis leader page
-    document.addEventListener('DOMContentLoaded', async function() {
-      // Check authentication
-      if (!Auth.isAuthenticated()) {
-        Navigation.goToLogin();
-        return;
-      }
-
-      // Check if user is manager (for leader access)
-      const user = Auth.getUser();
-      if (user.role !== 'manager') {
-        UI.showNotification('Access restricted to managers only', 'error');
-        setTimeout(() => Navigation.goToDashboard(), 2000);
-        return;
-      }
-
-      // Display user info
-      const userInfoEl = document.getElementById('userInfo');
-      if (user) {
-        userInfoEl.innerHTML = `
-          <strong>${user.name}</strong><br>
-          <small>${user.role} - ${user.workInfo?.department || 'No Department'}</small>
-        `;
-      }
-
-      // Load team data from backend (placeholder - replace with actual API call)
-      await loadTeamData();
-    });
-
-    const sidebar = document.getElementById("sidebar");
-    const menuBtn = document.getElementById("menuBtn");
-    const closeBtn = document.getElementById("closeBtn");
-
-    menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
-    closeBtn.addEventListener("click", () => sidebar.classList.remove("active"));
-
-    // Team data - in real implementation, this would come from backend
-    let teamData = {
-      "Aman": { assigned: ["Dashboard UI"], completed: ["Login page", "Sidebar"] },
-      "Sara": { assigned: ["Database schema"], completed: ["API setup"] },
-      "Raj": { assigned: ["ML model integration"], completed: ["Data preprocessing"] }
-    };
-
-    async function loadTeamData() {
-      try {
-        // In real implementation:
-        // const response = await API.get(API_CONFIG.PROJECT_ENDPOINTS.TEAM_DATA);
-        // teamData = response.data;
-        
-        // For now, using placeholder data
-        console.log('Team data loaded:', teamData);
-      } catch (error) {
-        UI.showNotification('Failed to load team data', 'error');
-      }
-    }
-
-    function showMember(name) {
-      document.getElementById("memberName").textContent = name + " - Details";
-      renderList("assignedList", teamData[name].assigned);
-      renderList("completedList", teamData[name].completed);
-    }
-
-    function renderList(elementId, items) {
-      const ul = document.getElementById(elementId);
-      ul.innerHTML = "";
-      items.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        ul.appendChild(li);
-      });
-    }
-
-    async function assignWork() {
-      const task = document.getElementById("taskInput").value.trim();
-      const member = document.getElementById("memberSelect").value;
-      
-      if (!task) {
-        UI.showNotification('Please enter a task description', 'error');
-        return;
-      }
-
-      try {
-        // In real implementation:
-        // await API.post(API_CONFIG.PROJECT_ENDPOINTS.ASSIGN_TASK, {
-        //   task: task,
-        //   member: member,
-        //   projectId: 'current-project-id'
-        // });
-
-        // For now, update local data
-        teamData[member].assigned.push(task);
-        showMember(member);
-        document.getElementById("taskInput").value = "";
-        UI.showNotification(`Task assigned to ${member} successfully`, 'success');
-      } catch (error) {
-        UI.showNotification('Failed to assign task', 'error');
-      }
-    }
-  </script>
+  <script src="../assets/js/project_analysis_leader.js"></script>
 </body>
 </html>

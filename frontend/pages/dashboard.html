@@ -1,63 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Orchestrix - Dashboard</title>
-  <link rel="icon" href="icon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/theme.css">
-  <script src="../assets/js/app.js"></script>
-  <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HRMS</title>
+    
+    <!-- Prevent caching for security -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-  <!-- Menu button -->
-  <button class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></button>
-
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <button class="close-btn" id="closeBtn"><i class="fa fa-times"></i></button>
-    <div class="brand">
-      <div class="logo">Ox</div>
-      <div class="title">Orchestrix</div>
+     <div class="brand">
+      <div class="logo"><i class="fa-solid fa-user-tie"></i></div>
     </div>
     <nav class="nav">
-      <a href="dashboard.html" class="active"><span class="icon"><i class="fa fa-grid-2"></i></span> Dashboard</a>
+      <a href="dashboard.html" class="active"><span class="icon"><i class="fa-solid fa-house"></i></span> Dashboard</a>
     <a href="project_analysis_member.html"><span class="icon"><i class="fa fa-chart-line"></i></span> Project Analysis</a>
       <a href="#" class="logout-btn"><span class="icon"><i class="fa fa-right-from-bracket"></i></span> Logout</a>
     </nav>
+   
     <div class="userbox">
       <div class="user-name">Loading...</div>
       <div class="user-role">Loading...</div>
     </div>
   </div>
-
+   <!-- Menu button -->
+  <button class="menu-btn" id="menuBtn" style="margin-left:1rem;margin-top:1rem;"><i class="fa fa-bars"></i></button>
   <!-- Main content -->
-  <div class="main-content">
-    <h1 class="page-title">Your Projects</h1>
-    <div class="projects">
-      <div class="project-card"><h3>Project Alpha</h3><div class="badges"><span class="badge team-leader">Team Leader</span></div></div>
-      <div class="project-card"><h3>Project Beta</h3><div class="badges"><span class="badge">Team Member</span></div></div>
-      <div class="project-card"><h3>Project Gamma</h3><div class="badges"><span class="badge">Team Member</span></div></div>
-    </div>
-  </div>
-
-  <!-- Assistant Widget (floating) -->
-  <div id="assistantWidget" class="assistant-widget" aria-live="polite">
-    <button id="assistantToggle" class="assistant-toggle" aria-expanded="false" aria-controls="assistantPanel">
-      <i class="fa fa-robot"></i>
-    </button>
-    <div id="assistantPanel" class="assistant-panel" hidden>
-      <div class="assistant-header">
-        <span>AI Assistant</span>
-        <button id="assistantClose" class="assistant-close" aria-label="Close"><i class="fa fa-times"></i></button>
+  <div class="center">
+    <div class="main-content">
+      <h1 class="page-title">Your Projects</h1>
+      <div class="projects" id="projectsContainer">
+        <!-- Projects will be loaded dynamically -->
+        <div class="loading-state" id="loadingState" style="text-align: center; padding: 3rem; color: #64748b;">
+          <i class="fa fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+          <p>Loading your projects...</p>
+        </div>
       </div>
-      <div class="assistant-messages" id="assistantMessages" aria-live="polite"></div>
-      <div class="assistant-input">
-        <input type="text" id="assistantInput" placeholder="Ask anything..." />
-        <button id="assistantSend" class="assistant-send"><i class="fa fa-paper-plane"></i></button>
+    </div>
+
+    <!-- Assistant Widget (floating) -->
+    <div class="assistant-widget" aria-live="polite" style="z-index:1;">
+      <button id="assistantToggle" class="assistant-toggle" aria-expanded="false" aria-controls="assistantPanel">
+        <i class="fa fa-robot"></i>
+      </button>
+      <div id="assistantPanel" class="assistant-panel" hidden>
+        <div class="assistant-header">
+          <span>AI Assistant</span>
+          <button id="assistantClose" class="assistant-close" aria-label="Close"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="assistant-messages" id="assistantMessages" aria-live="polite"></div>
+        <div class="assistant-input">
+          <input type="text" id="assistantInput" placeholder="Ask anything..." />
+          <button id="assistantSend" class="assistant-send"><i class="fa fa-paper-plane"></i></button>
+        </div>
       </div>
     </div>
   </div>
@@ -65,30 +69,43 @@
   <!-- Sidebar overlay -->
   <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
 
-  <!-- Floating Options -->
-  <div class="options">
-    <button class="gradient-btn" style="background:linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"><i class="fa-solid fa-fire"></i> Report Burnout</button>
-    <button class="gradient-btn"><i class="fa-solid fa-plus"></i> Make Team</button>
-    <button class="gradient-btn"><i class="fa-solid fa-plus"></i> Join Team</button>
-  </div>
-
-  <!-- Calendar -->
-  <div class="calendar">
-    <header>
-      <button id="prevMonth"><i class="fa fa-chevron-left"></i></button>
-      <h2 id="monthYear"></h2>
-      <button id="nextMonth"><i class="fa fa-chevron-right"></i></button>
-    </header>
-    <div class="weekdays" aria-hidden="true">
-      <div>Sun</div>
-      <div>Mon</div>
-      <div>Tue</div>
-      <div>Wed</div>
-      <div>Thu</div>
-      <div>Fri</div>
-      <div>Sat</div>
+  <div class="right-bar">
+    <!-- Calendar -->
+    <div class="calendar">
+      <header>
+        <button id="prevMonth"><i class="fa fa-chevron-left"></i></button>
+        <h2 id="monthYear"></h2>
+        <button id="nextMonth"><i class="fa fa-chevron-right"></i></button>
+      </header>
+      <div class="weekdays" aria-hidden="true">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
+      <div class="calendar-days" id="calendarDays"></div>
     </div>
-    <div class="calendar-days" id="calendarDays"></div>
+
+    <button id="addBtn"><i class="fa-solid fa-plus"></i>  Add Deadline</button>
+
+    <div id="popup">
+      <h3>Add Deadline</h3>
+      <input type="text" id="task" placeholder="Task description" style="border-radius:0.5rem;">
+      <input type="date" id="date"  style="border-radius:0.5rem;">
+      <button id="saveBtn"  style="border-radius:0.5rem;">Save</button>
+      <button onclick="closePopup()"  style="border-radius:0.5rem;">Cancel</button>
+    </div>
+
+    <div class="options">
+      <button class="gradient-btn" style="background:linear-gradient(135deg, #EF4444 0%, #DC2626 100%);"><i class="fa-solid fa-fire"></i> Report Burnout</button>
+      <div style="margin-top:1rem;">
+        <button class="gradient-btn" id="make_team"><i class="fa-solid fa-plus"></i> Create Project</button>
+        <button class="gradient-btn" id="join_team"><i class="fa-solid fa-plus"></i> Join Project</button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -100,239 +117,6 @@
     </div>
   </div>
 
-  <script>
-    // Initialize dashboard with user data
-    document.addEventListener('DOMContentLoaded', async function() {
-      // Authentication check happens in app.js
-      
-      // Load user projects (placeholder - replace with actual API call)
-      loadUserProjects();
-      
-      // Initialize sidebar
-      const sidebar = document.getElementById("sidebar");
-      const menuBtn = document.getElementById("menuBtn");
-      const closeBtn = document.getElementById("closeBtn");
-
-      menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
-      closeBtn.addEventListener("click", () => sidebar.classList.remove("active"));
-    });
-
-    async function loadUserProjects() {
-      try {
-        // This would connect to your backend API
-        // const projects = await API.get(API_CONFIG.PROJECT_ENDPOINTS.LIST);
-        
-        // For now, showing placeholder data
-        const user = Auth.getUser();
-        if (user && user.role === 'manager') {
-          // Show different projects for managers
-          updateProjectsForManager();
-        } else {
-          // Show employee projects
-          updateProjectsForEmployee();
-        }
-      } catch (error) {
-        UI.showNotification('Failed to load projects', 'error');
-      }
-    }
-
-    function updateProjectsForManager() {
-      const projectsContainer = document.querySelector('.projects');
-      projectsContainer.innerHTML = `
-        <div class="project-card">
-          <h3>Project Alpha</h3>
-          <div class="badges">
-            <span class="badge team-leader">Team Leader</span>
-          </div>
-        </div>
-        <div class="project-card">
-          <h3>Project Beta</h3>
-          <div class="badges">
-            <span class="badge team-leader">Team Leader</span>
-          </div>
-        </div>
-        <div class="project-card">
-          <h3>Project Gamma</h3>
-          <div class="badges">
-            <span class="badge">Team Member</span>
-          </div>
-        </div>
-      `;
-    }
-
-    function updateProjectsForEmployee() {
-      const projectsContainer = document.querySelector('.projects');
-      projectsContainer.innerHTML = `
-        <div class="project-card">
-          <h3>Project Alpha</h3>
-          <div class="badges">
-            <span class="badge">Team Member</span>
-          </div>
-        </div>
-        <div class="project-card">
-          <h3>Project Beta</h3>
-          <div class="badges">
-            <span class="badge">Team Member</span>
-          </div>
-        </div>
-      `;
-    }
-
-    const calendarDays = document.getElementById("calendarDays");
-    const monthYear = document.getElementById("monthYear");
-    const modal = document.getElementById("modal");
-    const taskDate = document.getElementById("taskDate");
-    const taskDetail = document.getElementById("taskDetail");
-    const closeModal = document.getElementById("closeModal");
-
-    // Example deadlines
-    const deadlines = {
-      "2025-9-5": "Submit project proposal 📑",
-      "2025-9-12": "Team meeting at 3 PM 👥",
-      "2025-9-18": "AI model demo 🚀",
-      "2025-9-25": "Final report submission 📝"
-    };
-
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-
-    function renderCalendar(month, year) {
-      calendarDays.innerHTML = "";
-      const firstDay = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
-
-      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      monthYear.textContent = `${monthNames[month]} ${year}`;
-
-      // Empty slots before first day
-      for (let i = 0; i < firstDay; i++) {
-        const empty = document.createElement("div");
-        calendarDays.appendChild(empty);
-      }
-
-      for (let day = 1; day <= totalDays; day++) {
-        const dayDiv = document.createElement("div");
-        dayDiv.classList.add("day");
-        dayDiv.textContent = day;
-
-        const today = new Date();
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-          dayDiv.classList.add("today");
-        }
-
-        const key = `${year}-${month+1}-${day}`;
-        if (deadlines[key]) {
-          dayDiv.classList.add("deadline");
-          dayDiv.addEventListener("click", () => {
-            taskDate.textContent = `${monthNames[month]} ${day}, ${year}`;
-            taskDetail.textContent = deadlines[key];
-            modal.style.display = "flex";
-          });
-        }
-
-        calendarDays.appendChild(dayDiv);
-      }
-    }
-
-    document.getElementById("prevMonth").addEventListener("click", () => {
-      currentMonth--;
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-      renderCalendar(currentMonth, currentYear);
-    });
-
-    document.getElementById("nextMonth").addEventListener("click", () => {
-      currentMonth++;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-      renderCalendar(currentMonth, currentYear);
-    });
-
-    closeModal.addEventListener("click", () => modal.style.display = "none");
-    window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
-
-    renderCalendar(currentMonth, currentYear);
-
-    // Assistant widget logic (no memory)
-    const aToggle = document.getElementById('assistantToggle');
-    const aPanel = document.getElementById('assistantPanel');
-    const aClose = document.getElementById('assistantClose');
-    const aInput = document.getElementById('assistantInput');
-    const aSend = document.getElementById('assistantSend');
-    const aMsgs = document.getElementById('assistantMessages');
-
-    function openAssistant(){
-      aPanel.hidden = false;
-      aToggle.setAttribute('aria-expanded','true');
-      aInput.focus();
-    }
-    function closeAssistant(){
-      aPanel.hidden = true;
-      aToggle.setAttribute('aria-expanded','false');
-      // If URL hash was used to open the assistant, clear it on close
-      if (location.hash && location.hash.toLowerCase() === '#assistant') {
-        try { history.replaceState(null, '', location.pathname + location.search); } catch {}
-      }
-    }
-    aToggle.addEventListener('click', () => aPanel.hidden ? openAssistant() : closeAssistant());
-    aClose.addEventListener('click', closeAssistant);
-    aInput.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ sendAssistant(); }});
-    aSend.addEventListener('click', sendAssistant);
-
-    // Open assistant if navigated with #assistant and on hash changes
-    function handleAssistantHash(){
-      if ((location.hash || '').toLowerCase() === '#assistant') {
-        openAssistant();
-      }
-    }
-    window.addEventListener('hashchange', handleAssistantHash);
-    handleAssistantHash();
-
-    async function sendAssistant(){
-      const text = aInput.value.trim();
-      if(!text) return;
-      appendMsg('user', text);
-      aInput.value = '';
-      // Try backend chat, fallback to simple reply
-      try{
-        const res = await API.post('/chat', { message: text });
-        // Expected backend shape: { success: true, data: { response, session_id } }
-        if (!res || res.success === false) {
-          UI && UI.showNotification && UI.showNotification('AI service unavailable, using basic assistant', 'error');
-          appendMsg('ai', generateReply(text));
-          return;
-        }
-        const reply = (res && (res.data && (res.data.response || res.data.reply))
-          || res.response || res.reply || res.message || res.text) || generateReply(text);
-        appendMsg('ai', reply);
-      }catch(err){
-        UI && UI.showNotification && UI.showNotification('AI service error, using basic assistant', 'error');
-        appendMsg('ai', generateReply(text));
-      }
-    }
-    function appendMsg(role, text){
-      const div = document.createElement('div');
-      div.className = `a-msg ${role}`;
-      div.textContent = text;
-      aMsgs.appendChild(div);
-      aMsgs.scrollTop = aMsgs.scrollHeight;
-    }
-    function generateReply(text){
-      const user = Auth.getUser() || {};
-      if(/project/i.test(text)) return `I can help summarize your projects and roles. What do you want to know?`;
-      if(/team/i.test(text)) return `Tell me about the team task or coordination you need help with.`;
-      if(/schedule|calendar/i.test(text)) return `I can reference the calendar on this page. What date or deadline?`;
-      return `Got it: "${text}". I’ll assist with HRMS-related queries like projects, teams, and schedules.`;
-    }
-
-    // Sidebar overlay behavior
-    const overlay = document.getElementById('sidebarOverlay');
-    const sidebarEl = document.getElementById('sidebar');
-    const menuBtnEl = document.getElementById('menuBtn');
-    const closeBtnEl = document.getElementById('closeBtn');
-    function openSidebar(){ sidebarEl.classList.add('active'); overlay.hidden = false; }
-    function closeSidebar(){ sidebarEl.classList.remove('active'); overlay.hidden = true; }
-    if(menuBtnEl){ menuBtnEl.addEventListener('click', openSidebar); }
-    if(closeBtnEl){ closeBtnEl.addEventListener('click', closeSidebar); }
-    overlay.addEventListener('click', closeSidebar);
-  </script>
+  <script src="../assets/js/dashboard_app.js"></script>
 </body>
 </html>
