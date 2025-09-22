@@ -1,4 +1,4 @@
-/* Global theme variables and toggle styles */
+/* Global theme variables */
 :root,
 html[data-theme="dark"] {
   --bg: #0b1220;
@@ -37,30 +37,6 @@ body { background: var(--bg); color: var(--text); }
 *::-webkit-scrollbar { width: 10px; height: 10px; }
 *::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.35); border-radius: 10px; }
 
-/* Theme toggle (floating) */
-.theme-toggle {
-  position: fixed;
-  top: 12px; right: 12px;
-  z-index: 1500;
-  background: linear-gradient(135deg, var(--bg-soft), var(--card));
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 8px 20px var(--shadow);
-  display: inline-flex; align-items: center; gap: 8px;
-  font-weight: 700; font-family: inherit;
-}
-.theme-toggle .icon { font-size: 1rem; line-height: 1; }
-.theme-toggle:hover { filter: brightness(1.05); transform: translateY(-1px); }
-.theme-toggle:active { transform: translateY(0); }
-
-/* Embedded theme toggle within nav */
-.theme-toggle.nav-embed { position: static; margin-left: auto; }
-nav { display: flex; align-items: center; gap: .75rem; }
-nav ul { flex: 1 1 auto; }
-
 /* Global responsive button and nav handling */
 button, .btn { max-width: 100%; white-space: normal; }
 .gradient-btn { max-width: 100%; white-space: normal; }
@@ -68,11 +44,3 @@ button, .btn { max-width: 100%; white-space: normal; }
 
 /* Prevent nav overflow if a page defines a nav list */
 nav ul { flex-wrap: wrap; }
-
-/* Mobile adjustments */
-@media (max-width: 600px) {
-  .theme-toggle { top: auto; right: 12px; bottom: 12px; }
-}
-
-/* When sidebar is open, ensure toggle doesn't block close button */
-.sidebar.active ~ .theme-toggle { top: auto; bottom: 12px; right: 12px; z-index: 500; pointer-events: none; }

@@ -1,6 +1,28 @@
-# HRMS - Human Resource Management System
+# HRMS - Orchestrator
 
-A comprehensive Human Resource Management System with AI-powered features for employee management, project tracking, and resource optimization.
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green.svg)](https://www.mongodb.com/atlas)
+[![Contributors](https://img.shields.io/github/contributors/AmanSingh5416/SIH---Orchestrator)](https://github.com/AmanSingh5416/SIH---Orchestrator/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/AmanSingh5416/SIH---Orchestrator)](https://github.com/AmanSingh5416/SIH---Orchestrator/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/AmanSingh5416/SIH---Orchestrator)](https://github.com/AmanSingh5416/SIH---Orchestrator/pulls)
+
+> A comprehensive Human Resource Management System with AI-powered features for employee management, project tracking, and resource optimization.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Demo](#-demo)
+- [Quick Start](#-quick-start)
+- [Technology Stack](#-technology-stack)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [API Documentation](#-api-documentation)
+- [Contributing](#-contributing)
+- [Security](#-security)
+- [License](#-license)
+- [Support](#-support)
 
 ## 🚀 Features
 
@@ -11,7 +33,37 @@ A comprehensive Human Resource Management System with AI-powered features for em
 - **Dashboard**: Personalized dashboard with calendar, projects, and user info
 - **Resource Optimization**: AI-powered resource allocation and team management
 
-## 🛠️ Technology Stack
+## � Demo
+
+> **Note**: Live demo coming soon! For now, you can run the project locally using the quick start guide below.
+
+### Screenshots
+
+| Dashboard | Project Analysis | AI Assistant |
+|-----------|------------------|--------------|
+| ![Dashboard](https://via.placeholder.com/300x200?text=Dashboard) | ![Analysis](https://via.placeholder.com/300x200?text=Project+Analysis) | ![AI](https://via.placeholder.com/300x200?text=AI+Assistant) |
+
+## ⚡ Quick Start
+
+Get the project running in under 5 minutes:
+
+```bash
+# Clone the repository
+git clone https://github.com/AmanSingh5416/SIH---Orchestrator.git
+cd SIH---Orchestrator
+
+# Install dependencies and setup project
+npm run setup
+
+# Start development servers
+npm run dev
+```
+
+The application will be available at:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+
+## �🛠️ Technology Stack
 
 ### Backend
 - **Node.js** with Express.js framework
@@ -76,6 +128,92 @@ HRMS/
 ├── .gitignore                 # Git ignore rules
 └── README.md                  # This file
 ```
+
+## 🔧 Installation
+
+### Prerequisites
+
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) (v14 or higher)
+- [npm](https://www.npmjs.com/) (v6 or higher)
+- [MongoDB Atlas](https://www.mongodb.com/atlas) account
+
+### Step-by-Step Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AmanSingh5416/SIH---Orchestrator.git
+   cd SIH---Orchestrator
+   ```
+
+2. **Install all dependencies**
+   ```bash
+   npm run install:all
+   ```
+
+3. **Environment Configuration**
+   ```bash
+   # Copy the example environment file
+   cp .env.example backend/.env
+   ```
+   
+   Edit `backend/.env` with your configuration:
+   ```env
+   PORT=5000
+   MONGODB_URI=your_mongodb_atlas_connection_string
+   JWT_SECRET=your_super_secret_jwt_key
+   NODE_ENV=development
+   ```
+
+4. **Start the application**
+   ```bash
+   # Development mode (both frontend and backend)
+   npm run dev
+   
+   # Or start individually
+   npm run start:backend  # Backend only
+   npm run start:frontend # Frontend only
+   ```
+
+### Alternative Setup Methods
+
+#### Using the Setup Scripts
+
+**Windows:**
+```cmd
+setup.bat
+```
+
+**Linux/macOS:**
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+#### Manual Setup
+
+<details>
+<summary>Click to expand manual setup instructions</summary>
+
+**Backend Setup:**
+```bash
+cd backend
+npm install
+# Configure .env file
+npm start
+```
+
+**Frontend Setup:**
+```bash
+cd frontend
+# Serve using your preferred method
+npx serve .
+# OR
+python -m http.server 8000
+# OR use Live Server extension in VS Code
+```
+
+</details>
 
 ## 🔧 Setup and Installation
 
@@ -203,7 +341,37 @@ The system includes AI-powered features:
 - **Performance Insights**: Data-driven performance recommendations
 - **Conversational Assistant**: Natural language HR queries and responses
 
-## 🚀 API Endpoints
+## � Usage
+
+### For Employees
+1. **Register/Login** to access your dashboard
+2. **View assigned tasks** in project analysis
+3. **Mark tasks complete** and track progress
+4. **Use AI assistant** for work-related queries
+
+### For Managers
+1. **Access team leader dashboard** with management tools
+2. **Assign tasks** to team members
+3. **Monitor project progress** and team performance
+4. **Use AI insights** for resource optimization
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev              # Start both frontend and backend
+npm run dev:backend      # Backend development mode
+npm run start:frontend   # Serve frontend files
+
+# Production
+npm run start:backend    # Start backend server
+
+# Setup
+npm run setup           # Complete project setup
+npm run install:all     # Install all dependencies
+```
+
+## �🚀 API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - User registration
@@ -312,6 +480,60 @@ The system includes AI-powered features:
    - Clear browser localStorage
    - Check JWT token expiration
    - Verify backend auth middleware
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) before getting started.
+
+### Quick Contribution Steps
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+See our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## 🔒 Security
+
+Security is a top priority. Please review our [Security Policy](SECURITY.md) for:
+- Reporting vulnerabilities
+- Security best practices
+- Supported versions
+
+**Never** commit sensitive information like API keys or passwords.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+### Getting Help
+- 📖 **Documentation**: Check this README and [CONTRIBUTING.md](CONTRIBUTING.md)
+- 🐛 **Bug Reports**: [Create an issue](https://github.com/AmanSingh5416/SIH---Orchestrator/issues)
+- 💡 **Feature Requests**: [Open a discussion](https://github.com/AmanSingh5416/SIH---Orchestrator/discussions)
+- 🔒 **Security Issues**: See [SECURITY.md](SECURITY.md)
+
+### Community
+- ⭐ **Star** this repository if you find it helpful
+- 🐛 **Report bugs** and help improve the project
+- 💡 **Suggest features** and enhancements
+- 🤝 **Contribute code** and documentation
+
+### Project Maintainers
+- **Aman Singh** - [@AmanSingh5416](https://github.com/AmanSingh5416)
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the developer community**
+
+[⬆ Back to Top](#hrms---orchestrator)
+
+</div>
 
 ## 🤝 Contributing
 

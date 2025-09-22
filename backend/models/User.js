@@ -58,6 +58,22 @@ const UserSchema = new mongoose.Schema(
         max: 80
       }, // For AI agent (weekly hours)
     },
+    // Team Management
+    teams: [{
+      team: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Team"
+      },
+      role: {
+        type: String,
+        enum: ["leader", "member"],
+        default: "member"
+      },
+      joinedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
     isActive: {
       type: Boolean,
       default: true,

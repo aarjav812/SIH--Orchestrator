@@ -21,4 +21,20 @@ router.post('/login', loginUser);
 // @access  Private
 router.get('/me', protect, getMe);
 
+// @route   GET /api/auth/verify-token
+// @desc    Verify if token is valid and user exists
+// @access  Private
+router.get('/verify-token', protect, (req, res) => {
+  // If we reach here, the protect middleware has already validated the token
+  res.json({
+    success: true,
+    message: 'Token is valid',
+    user: {
+      id: req.user._id,
+      email: req.user.email,
+      role: req.user.role
+    }
+  });
+});
+
 module.exports = router;
