@@ -736,31 +736,287 @@ body {
   }
 }
 
-/* Success/Error messages */
-.message {
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  background: rgba(42, 42, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transform: translateX(400px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100000;
+}
+
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-content {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: 500;
+  flex: 1;
 }
 
-.message.success {
-  background: rgba(34, 197, 94, 0.15);
+.toast-success {
+  border-left: 4px solid #22c55e;
+}
+
+.toast-success .toast-content i {
   color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
-.message.error {
-  background: rgba(239, 68, 68, 0.15);
+.toast-error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast-error .toast-content i {
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.message.info {
-  background: rgba(59, 130, 246, 0.15);
+.toast-warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.toast-warning .toast-content i {
+  color: #f59e0b;
+}
+
+.toast-info {
+  border-left: 4px solid #3b82f6;
+}
+
+.toast-info .toast-content i {
   color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.toast-close:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Form Validation States */
+.profile-field.field-error input,
+.profile-field.field-error select,
+.profile-field.field-error textarea {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.profile-field.field-success input,
+.profile-field.field-success select,
+.profile-field.field-success textarea {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.field-error-message {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideInError 0.3s ease;
+}
+
+.field-error-message::before {
+  content: "⚠";
+  font-size: 0.8rem;
+}
+
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Animations */
+.profile-section {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.profile-section:nth-child(1) { animation-delay: 0.1s; }
+.profile-section:nth-child(2) { animation-delay: 0.2s; }
+.profile-section:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-avatar-section {
+  animation: fadeInScale 0.8s ease forwards;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+@keyframes fadeInScale {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Button Hover Effects */
+.gradient-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.gradient-btn:hover::before {
+  left: 100%;
+}
+
+.cancel-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.cancel-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.cancel-btn:hover::after {
+  width: 200%;
+  height: 200%;
+}
+
+/* Improved Modal Animations */
+.modal-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay[style*="flex"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  transform: scale(0.9) translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay[style*="flex"] .modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Skill Tags Animation */
+.skill-tag {
+  animation: slideInSkill 0.4s ease forwards;
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+@keyframes slideInSkill {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Loading State Improvements */
+.loading::before {
+  backdrop-filter: blur(2px);
+}
+
+/* Smooth Transitions */
+* {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Focus States */
+.profile-field input:focus,
+.profile-field select:focus,
+.profile-field textarea:focus {
+  outline: none;
+  border-color: #1fad82;
+  box-shadow: 0 0 0 3px rgba(31, 173, 130, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Keyboard Shortcut Hints */
+.keyboard-hint {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(42, 42, 42, 0.9);
+  color: #9ca3af;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.keyboard-hint.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.keyboard-hint kbd {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.75rem;
 }

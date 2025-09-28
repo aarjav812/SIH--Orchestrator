@@ -11,60 +11,49 @@
     <meta http-equiv="Expires" content="0">
     
     <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/modern-sidebar.css">
     <link rel="stylesheet" href="../assets/css/theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
-    <button class="close-btn" id="closeBtn"><i class="fa fa-times"></i></button>
-     <div class="brand">
-      <div class="logo"><i class="fa-solid fa-user-tie"></i></div>
-    </div>
-    <nav class="nav">
-      <a href="dashboard.html" class="active"><span class="icon"><i class="fa-solid fa-house"></i></span> Dashboard</a>
-    <a href="project_analysis_member.html"><span class="icon"><i class="fa fa-chart-line"></i></span> Project Analysis</a>
-      <a href="profile.html"><span class="icon"><i class="fa fa-user"></i></span> Profile</a>
-      <a href="#" class="logout-btn"><span class="icon"><i class="fa fa-right-from-bracket"></i></span> Logout</a>
-    </nav>
-   
-    <div class="userbox">
-      <div class="user-name">Loading...</div>
-      <div class="user-role">Loading...</div>
-    </div>
+    <!-- Modern sidebar will be populated by JavaScript -->
   </div>
-   <!-- Menu button -->
-  <button class="menu-btn" id="menuBtn" style="margin-left:1rem;margin-top:1rem;"><i class="fa fa-bars"></i></button>
+   <!-- Modern Menu button -->
+  <button class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></button>
+  
+  <!-- Sidebar overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
+  
   <!-- Main content -->
   <div class="center">
     <div class="main-content">
       <h1 class="page-title">Your Projects</h1>
       <div class="projects" id="projectsContainer">
         <!-- Projects will be loaded dynamically -->
-        <div class="loading-state" id="loadingState" style="text-align: center; padding: 3rem; color: #64748b;">
-          <i class="fa fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-          <p>Loading your projects...</p>
+        <div class="loading-state" id="loadingState">
+          <div class="loading-content">
+            <div class="loading-spinner">
+              <div class="spinner-ring"></div>
+              <div class="spinner-ring"></div>
+              <div class="spinner-ring"></div>
+            </div>
+            <div class="loading-text">
+              <h3>Loading Your Projects</h3>
+              <p>Please wait while we fetch your latest data...</p>
+            </div>
+            <div class="loading-skeleton">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Assistant Widget (floating) -->
-    <div class="assistant-widget" aria-live="polite" style="z-index:1;">
-      <button id="assistantToggle" class="assistant-toggle" aria-expanded="false" aria-controls="assistantPanel">
-        <i class="fa fa-robot"></i>
-      </button>
-      <div id="assistantPanel" class="assistant-panel" hidden>
-        <div class="assistant-header">
-          <span>AI Assistant</span>
-          <button id="assistantClose" class="assistant-close" aria-label="Close"><i class="fa fa-times"></i></button>
-        </div>
-        <div class="assistant-messages" id="assistantMessages" aria-live="polite"></div>
-        <div class="assistant-input">
-          <input type="text" id="assistantInput" placeholder="Ask anything..." />
-          <button id="assistantSend" class="assistant-send"><i class="fa fa-paper-plane"></i></button>
-        </div>
-      </div>
-    </div>
+
   </div>
 
   <!-- Sidebar overlay -->
@@ -120,6 +109,12 @@
 
   <!-- Load app.js first for API configuration -->
   <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/hamburger-menu.js"></script>
+  <script src="../assets/js/modern-sidebar.js"></script>
+  <script src="../assets/js/ai-chatbot.js"></script>
+  <script src="../assets/js/ux-enhancements.js"></script>
   <script src="../assets/js/dashboard_app.js"></script>
+  <script src="../assets/js/project-buttons.js"></script>
+  <script src="../assets/js/dashboard-enhancements.js"></script>
 </body>
 </html>

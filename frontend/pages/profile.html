@@ -11,31 +11,20 @@
     <meta http-equiv="Expires" content="0">
     
     <link rel="stylesheet" href="../assets/css/profile.css">
+    <link rel="stylesheet" href="../assets/css/modern-sidebar.css">
     <link rel="stylesheet" href="../assets/css/theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
-    <button class="close-btn" id="closeBtn"><i class="fa fa-times"></i></button>
-     <div class="brand">
-      <div class="logo"><i class="fa-solid fa-user-tie"></i></div>
-    </div>
-    <nav class="nav">
-      <a href="dashboard.html"><span class="icon"><i class="fa-solid fa-house"></i></span> Dashboard</a>
-      <a href="project_analysis_member.html"><span class="icon"><i class="fa fa-chart-line"></i></span> Project Analysis</a>
-      <a href="profile.html" class="active"><span class="icon"><i class="fa fa-user"></i></span> Profile</a>
-      <a href="#" class="logout-btn"><span class="icon"><i class="fa fa-right-from-bracket"></i></span> Logout</a>
-    </nav>
-   
-    <div class="userbox">
-      <div class="user-name">Loading...</div>
-      <div class="user-role">Loading...</div>
-    </div>
+    <!-- Modern sidebar will be populated by JavaScript -->
   </div>
-
-  <!-- Menu button -->
+   <!-- Modern Menu button -->
   <button class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></button>
+  
+  <!-- Sidebar overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
 
   <!-- Main content -->
   <div class="center">
@@ -221,8 +210,19 @@
     </div>
   </div>
 
+  <!-- Keyboard Shortcuts Hint -->
+  <div class="keyboard-hint" id="keyboardHint">
+    <div><kbd>Ctrl</kbd> + <kbd>E</kbd> Toggle Edit Mode</div>
+    <div><kbd>Ctrl</kbd> + <kbd>S</kbd> Save Changes</div>
+    <div><kbd>Esc</kbd> Cancel/Close</div>
+  </div>
+
   <!-- Load app.js first for API configuration -->
   <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/hamburger-menu.js"></script>
+  <script src="../assets/js/modern-sidebar.js"></script>
+  <script src="../assets/js/ai-chatbot.js"></script>
+  <script src="../assets/js/ux-enhancements.js"></script>
   <script src="../assets/js/profile_app.js"></script>
 </body>
 </html>

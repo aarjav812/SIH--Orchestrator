@@ -12,14 +12,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Get current project data from sessionStorage
     const projectData = JSON.parse(sessionStorage.getItem('currentProject') || '{}');
     
-    // Display user info
-    const userInfoEl = document.getElementById('userInfo');
-    if (user) {
-        userInfoEl.innerHTML = `
-            <strong>${user.name}</strong><br>
-            <small>Project Member - ${user.workInfo?.department || 'No Department'}</small>
-            ${projectData.name ? `<br><em>Project: ${projectData.name}</em>` : ''}
-        `;
+    // Display user info in console for debugging (userInfo element was removed)
+    if (user && projectData.name) {
+        console.log('User:', user.name, 'Project:', projectData.name);
     }
 
     // Update page title with project name

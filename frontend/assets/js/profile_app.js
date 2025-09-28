@@ -28,6 +28,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Initialize event listeners
     initializeEventListeners();
+    
+    // Initialize keyboard shortcuts
+    initializeKeyboardShortcuts();
+    
+    // Initialize real-time validation
+    initializeRealTimeValidation();
 });
 
 // Initialize sidebar functionality
@@ -405,13 +411,13 @@ async function saveProfile() {
             // Update sidebar
             updateSidebarUserInfo();
             
-            showMessage('Profile updated successfully!', 'success');
+            showToast('Profile updated successfully!', 'success');
         } else {
             throw new Error(result.message || 'Failed to update profile');
         }
     } catch (error) {
         console.error('Error saving profile:', error);
-        showMessage('Failed to save profile. Please try again.', 'error');
+        showToast('Failed to save profile. Please try again.', 'error');
     } finally {
         showLoading(false);
     }
@@ -475,6 +481,12 @@ function updateCurrentUserData(formData) {
 
 // Cancel edit mode
 function cancelEdit() {
+    if (hasUnsavedChanges()) {
+        if (!confirm('You have unsaved changes. Are you sure you want to cancel?')) {
+            return;
+        }
+    }
+    
     // Restore original data
     currentUserData = JSON.parse(JSON.stringify(originalUserData));
     
@@ -485,7 +497,7 @@ function cancelEdit() {
     isEditMode = false;
     toggleEditMode();
     
-    showMessage('Changes cancelled.', 'info');
+    showToast('Changes cancelled', 'info');
 }
 
 // Initialize password modal
@@ -609,13 +621,13 @@ async function updatePassword() {
         
         if (response.ok && result.success) {
             closePasswordModal();
-            showMessage('Password updated successfully!', 'success');
+            showToast('Password updated successfully!', 'success');
         } else {
             throw new Error(result.message || 'Failed to update password');
         }
     } catch (error) {
         console.error('Error updating password:', error);
-        showMessage(`Failed to update password: ${error.message}`, 'error');
+        showToast(`Failed to update password: ${error.message}`, 'error');
     } finally {
         showLoading(false);
     }
@@ -663,5 +675,281 @@ function showMessage(text, type = 'info') {
     }
 }
 
+// Check for unsaved changes
+function hasUnsavedChanges() {
+    if (!isEditMode || !originalUserData) return false;
+    
+    const currentFormData = collectFormData();
+    
+    // Check personal info changes
+    const originalPersonal = originalUserData.personalInfo || {};
+    const currentPersonal = currentFormData.personalInfo;
+    
+    if (originalPersonal.firstName !== currentPersonal.firstName ||
+        originalPersonal.lastName !== currentPersonal.lastName ||
+        originalPersonal.phoneNumber !== currentPersonal.phoneNumber ||
+        originalPersonal.address !== currentPersonal.address ||
+        originalPersonal.location !== currentPersonal.location) {
+        return true;
+    }
+    
+    // Check work info changes
+    const originalWork = originalUserData.workInfo || {};
+    const currentWork = currentFormData.workInfo;
+    
+    if (originalWork.title !== currentWork.title ||
+        originalWork.experienceLevel !== currentWork.experienceLevel ||
+        originalWork.capacityHours !== currentWork.capacityHours) {
+        return true;
+    }
+    
+    // Check skills changes
+    const originalSkills = (originalWork.skills || []).sort();
+    const currentSkills = (currentWork.skills || []).sort();
+    
+    if (originalSkills.length !== currentSkills.length ||
+        !originalSkills.every((skill, index) => skill === currentSkills[index])) {
+        return true;
+    }
+    
+    return false;
+}
+
+// Enhanced toast notification system
+function showToast(message, type = 'info', duration = 4000) {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    const icon = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    }[type] || 'fa-info-circle';
+    
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fa ${icon}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fa fa-times"></i>
+        </button>
+    `;
+    
+    // Add to page
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Auto remove
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// Enhanced form validation with real-time feedback
+function validateField(fieldId, value, rules = {}) {
+    const field = document.getElementById(fieldId);
+    if (!field) return true;
+    
+    const fieldContainer = field.closest('.profile-field');
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Remove existing validation
+    fieldContainer.classList.remove('field-error', 'field-success');
+    const existingError = fieldContainer.querySelector('.field-error-message');
+    if (existingError) existingError.remove();
+    
+    // Required validation
+    if (rules.required && (!value || value.trim() === '')) {
+        isValid = false;
+        errorMessage = `${rules.label || 'This field'} is required`;
+    }
+    
+    // Length validation
+    if (isValid && rules.minLength && value.length < rules.minLength) {
+        isValid = false;
+        errorMessage = `${rules.label || 'This field'} must be at least ${rules.minLength} characters`;
+    }
+    
+    // Email validation
+    if (isValid && rules.email && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            isValid = false;
+            errorMessage = 'Please enter a valid email address';
+        }
+    }
+    
+    // Phone validation
+    if (isValid && rules.phone && value) {
+        const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+        if (!phoneRegex.test(value)) {
+            isValid = false;
+            errorMessage = 'Please enter a valid phone number';
+        }
+    }
+    
+    // Add validation feedback
+    if (!isValid) {
+        fieldContainer.classList.add('field-error');
+        const errorElement = document.createElement('div');
+        errorElement.className = 'field-error-message';
+        errorElement.textContent = errorMessage;
+        fieldContainer.appendChild(errorElement);
+    } else if (value) {
+        fieldContainer.classList.add('field-success');
+    }
+    
+    return isValid;
+}
+
+// Add keyboard shortcuts
+function initializeKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + S to save (in edit mode)
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            if (isEditMode) {
+                saveProfile();
+            }
+        }
+        
+        // Escape to cancel edit mode
+        if (e.key === 'Escape') {
+            if (isEditMode) {
+                cancelEdit();
+            }
+            
+            // Close modals
+            const modal = document.querySelector('.modal-overlay[style*="flex"]');
+            if (modal) {
+                closePasswordModal();
+            }
+        }
+        
+        // Ctrl/Cmd + E to toggle edit mode
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            toggleEditMode();
+        }
+    });
+}
+
+// Initialize real-time validation
+function initializeRealTimeValidation() {
+    const validationRules = {
+        firstName: { required: true, label: 'First name', minLength: 2 },
+        lastName: { required: true, label: 'Last name', minLength: 2 },
+        phoneNumber: { phone: true, label: 'Phone number' },
+        location: { required: true, label: 'Location', minLength: 2 },
+        capacityHours: { required: true, label: 'Capacity hours' }
+    };
+    
+    Object.keys(validationRules).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('blur', () => {
+                if (isEditMode) {
+                    validateField(fieldId, field.value, validationRules[fieldId]);
+                }
+            });
+            
+            field.addEventListener('input', () => {
+                if (isEditMode) {
+                    // Clear error state on input
+                    const fieldContainer = field.closest('.profile-field');
+                    fieldContainer.classList.remove('field-error');
+                    const existingError = fieldContainer.querySelector('.field-error-message');
+                    if (existingError) existingError.remove();
+                }
+            });
+        }
+    });
+}
+
+// Initialize keyboard shortcuts
+function initializeKeyboardShortcuts() {
+    let hintTimeout;
+    
+    document.addEventListener('keydown', (e) => {
+        // Show keyboard hints on Ctrl/Cmd press
+        if (e.ctrlKey || e.metaKey) {
+            showKeyboardHints();
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(hideKeyboardHints, 3000);
+        }
+        
+        // Ctrl/Cmd + S to save (in edit mode)
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            if (isEditMode) {
+                saveProfile();
+                showToast('Saving profile...', 'info', 2000);
+            } else {
+                showToast('Press Ctrl+E to edit profile first', 'info', 2000);
+            }
+        }
+        
+        // Escape to cancel edit mode
+        if (e.key === 'Escape') {
+            if (isEditMode) {
+                cancelEdit();
+            }
+            
+            // Close modals
+            const modal = document.querySelector('.modal-overlay[style*="flex"]');
+            if (modal) {
+                closePasswordModal();
+            }
+            
+            hideKeyboardHints();
+        }
+        
+        // Ctrl/Cmd + E to toggle edit mode
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            toggleEditMode();
+            const mode = isEditMode ? 'edit' : 'view';
+            showToast(`Switched to ${mode} mode`, 'info', 2000);
+        }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        if (!e.ctrlKey && !e.metaKey) {
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(hideKeyboardHints, 1000);
+        }
+    });
+}
+
+// Show keyboard hints
+function showKeyboardHints() {
+    const hint = document.getElementById('keyboardHint');
+    if (hint) {
+        hint.classList.add('show');
+    }
+}
+
+// Hide keyboard hints
+function hideKeyboardHints() {
+    const hint = document.getElementById('keyboardHint');
+    if (hint) {
+        hint.classList.remove('show');
+    }
+}
+
 // Make functions available globally for onclick handlers
 window.removeSkill = removeSkill;
+window.hasUnsavedChanges = hasUnsavedChanges;

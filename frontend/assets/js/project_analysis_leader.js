@@ -12,14 +12,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Get current project data from sessionStorage
     const projectData = JSON.parse(sessionStorage.getItem('currentProject') || '{}');
     
-    // Display user info
-    const userInfoEl = document.getElementById('userInfo');
-    if (user) {
-        userInfoEl.innerHTML = `
-            <strong>${user.name}</strong><br>
-            <small>Project Leader - ${user.workInfo?.department || 'No Department'}</small>
-            ${projectData.name ? `<br><em>Project: ${projectData.name}</em>` : ''}
-        `;
+    // Display user info in console for debugging (userInfo element was removed)
+    if (user && projectData.name) {
+        console.log('User:', user.name, 'Project:', projectData.name);
     }
 
     // Update page title with project name
@@ -34,39 +29,87 @@ document.addEventListener('DOMContentLoaded', async function() {
     await loadTeamData();
 });
 
-const sidebar = document.getElementById("sidebar");
-const menuBtn = document.getElementById("menuBtn");
-const closeBtn = document.getElementById("closeBtn");
-
-menuBtn.addEventListener("click", () => sidebar.classList.add("active"));
-closeBtn.addEventListener("click", () => sidebar.classList.remove("active"));
-
 // Team data - will be loaded from backend
 let teamData = {};
 let currentProject = {};
 let teamMembers = [];
 
+// Initialize currentProject from sessionStorage immediately
+try {
+    currentProject = JSON.parse(sessionStorage.getItem('currentProject') || '{}');
+} catch (error) {
+    console.error('Error parsing project data from sessionStorage:', error);
+    currentProject = {};
+}
+
+// Simple notification function
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        max-width: 400px;
+        word-wrap: break-word;
+        transition: all 0.3s ease;
+        background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transform: translateX(100%);
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
 async function loadTeamData() {
     try {
-        // Get current project data from sessionStorage
-        currentProject = JSON.parse(sessionStorage.getItem('currentProject') || '{}');
-        
+        // Use the already initialized currentProject
         if (!currentProject.id) {
-            UI.showNotification('No project selected', 'error');
+            console.error('No project ID found in sessionStorage');
+            showNotification('No project selected. Please go back to dashboard and select a project.', 'error');
             return;
         }
 
         console.log('Loading team data for project:', currentProject.id);
+        console.log('API URL:', `${API_CONFIG.BASE_URL}/teams/${currentProject.id}`);
+        console.log('Auth token exists:', !!Auth.getToken());
 
         // Get team details with members and tasks
-        const response = await fetch(`${API_CONFIG.BASE_URL.replace('/api', '')}/api/teams/${currentProject.id}`, {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/teams/${currentProject.id}`, {
+            method: 'GET',
             headers: {
-                'Authorization': `Bearer ${Auth.getToken()}`
+                'Authorization': `Bearer ${Auth.getToken()}`,
+                'Content-Type': 'application/json'
             }
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
         if (response.ok) {
             const result = await response.json();
+            console.log('API Response:', result);
             const team = result.data.team;
             
             console.log('Team data loaded:', team);
@@ -110,14 +153,30 @@ async function loadTeamData() {
             // Update the member cards display
             updateMemberCards();
             updateMemberSelect();
+            showNotification('Team data loaded successfully!', 'success');
             
         } else {
-            console.error('Failed to load team data:', response.status);
-            UI.showNotification('Failed to load team data', 'error');
+            const errorData = await response.text();
+            console.error('Failed to load team data:', response.status, errorData);
+            
+            if (response.status === 404) {
+                showNotification('Project not found. Please check if the project still exists.', 'error');
+            } else if (response.status === 403) {
+                showNotification('Access denied. You may not be a member of this project.', 'error');
+            } else if (response.status === 401) {
+                showNotification('Authentication failed. Please log in again.', 'error');
+                setTimeout(() => Navigation.goToLogin(), 2000);
+            } else {
+                showNotification(`Failed to load team data (${response.status})`, 'error');
+            }
         }
     } catch (error) {
         console.error('Error loading team data:', error);
-        UI.showNotification('Failed to load team data', 'error');
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            showNotification('Network error: Cannot connect to server. Please check if the server is running.', 'error');
+        } else {
+            showNotification('An unexpected error occurred while loading team data', 'error');
+        }
     }
 }
 

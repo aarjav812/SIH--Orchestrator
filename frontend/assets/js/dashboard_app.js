@@ -79,6 +79,7 @@ async function validateAuthenticationRealTime() {
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
         // Page became visible (user came back via back button or tab switch)
+        cleanupLoadingStates(); // Clean up any persistent loading states
         validateAuthenticationRealTime();
     }
 });
@@ -88,6 +89,15 @@ document.addEventListener('visibilitychange', function() {
 //     validateAuthenticationRealTime();
 // });
 
+// Clean up any persistent loading states
+function cleanupLoadingStates() {
+    // Remove any persistent card loading overlays
+    const loadingOverlays = document.querySelectorAll('.card-loading-overlay');
+    loadingOverlays.forEach(overlay => overlay.remove());
+    
+    console.log('Cleaned up persistent loading states');
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     // SECURITY: Basic authentication check (less aggressive)
     const token = window.Auth ? window.Auth.getToken() : localStorage.getItem('token');
@@ -96,6 +106,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         window.location.replace('../pages/login.html');
         return;
     }
+    
+    // Clean up any persistent loading states from previous navigation
+    cleanupLoadingStates();
     
     console.log('Token found, initializing dashboard...');
     
@@ -264,82 +277,171 @@ function displayUserTeams(teamsData) {
 
     console.log('Displaying user teams/projects:', teamsData);
 
-    // Hide loading state
+    // Add fade out animation to loading state
     const loadingState = document.getElementById('loadingState');
-    if (loadingState) loadingState.style.display = 'none';
-
-    // Clear existing content
-    projectsContainer.innerHTML = '';
-
-    // Check if teamsData is an array of team references or direct teams
-    const teams = Array.isArray(teamsData) ? teamsData : [];
-    console.log('Processed teams array:', teams);
-
-    if (teams.length === 0) {
-        console.log('No teams found, showing empty state');
-        showEmptyState();
-        return;
+    if (loadingState) {
+        loadingState.style.opacity = '0';
+        loadingState.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            loadingState.style.display = 'none';
+        }, 300);
     }
 
-    console.log(`Displaying ${teams.length} projects`);
+    // Clear existing content with animation (including any persistent loading overlays)
+    const existingCards = projectsContainer.querySelectorAll('.project-card');
+    existingCards.forEach((card, index) => {
+        // Remove any persistent loading overlays
+        const existingOverlay = card.querySelector('.card-loading-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(-20px) scale(0.9)';
+        }, index * 50);
+    });
 
-    // Add user's projects
-    teams.forEach((teamRef, index) => {
-        console.log(`Processing project ${index + 1}:`, teamRef);
+    setTimeout(() => {
+        projectsContainer.innerHTML = '';
         
-        // Handle both direct team objects and team reference objects
-        const team = teamRef.team || teamRef;
-        const role = teamRef.role || 'member';
-        
-        if (!team || !team.name) {
-            console.warn('Skipping invalid team:', teamRef);
-            return; // Skip invalid teams
+        // Check if teamsData is an array of team references or direct teams
+        const teams = Array.isArray(teamsData) ? teamsData : [];
+        console.log('Processed teams array:', teams);
+
+        if (teams.length === 0) {
+            console.log('No teams found, showing empty state');
+            showEmptyState();
+            return;
         }
 
-        const projectCard = document.createElement('div');
-        projectCard.className = 'project-card';
-        projectCard.setAttribute('data-team-id', team._id);
-        projectCard.setAttribute('data-role', role);
-        
-        projectCard.innerHTML = `
-            <h3>${team.name}</h3>
-            <p class="team-description">${team.description || 'No description provided'}</p>
-            <div class="badges">
-                <span class="badge ${role === 'leader' ? 'team-leader' : ''}">${role === 'leader' ? 'Project Leader' : 'Project Member'}</span>
-                <span class="team-code">Code: ${team.teamCode}</span>
-            </div>
-            <div class="team-info">
-                <small>Members: ${team.memberCount || team.members?.length || 0}/${team.maxMembers || 10}</small>
-            </div>
-        `;
+        console.log(`Displaying ${teams.length} projects`);
 
-        // Add click handler for navigation
-        projectCard.style.cursor = 'pointer';
-        projectCard.addEventListener('click', () => {
-            // Store current project data for the analysis page
-            const projectData = {
-                id: team._id,
-                name: team.name,
-                description: team.description,
-                teamCode: team.teamCode,
-                role: role,
-                memberCount: team.memberCount || team.members?.length || 0,
-                maxMembers: team.maxMembers || 10
-            };
+        // Add user's projects with staggered animation
+        teams.forEach((teamRef, index) => {
+            console.log(`Processing project ${index + 1}:`, teamRef);
             
-            // Store in sessionStorage for the analysis page to access
-            sessionStorage.setItem('currentProject', JSON.stringify(projectData));
-            
-            if (role === 'leader') {
-                window.location.href = `project_analysis_leader.html?project=${team._id}&role=${role}`;
-            } else {
-                window.location.href = `project_analysis_member.html?project=${team._id}&role=${role}`;
-            }
+            setTimeout(() => {
+                // Handle both direct team objects and team reference objects
+                const team = teamRef.team || teamRef;
+                const role = teamRef.role || 'member';
+                
+                if (!team || !team.name) {
+                    console.warn('Skipping invalid team:', teamRef);
+                    return; // Skip invalid teams
+                }
+
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.setAttribute('data-team-id', team._id);
+                projectCard.setAttribute('data-role', role);
+                
+                // Add initial animation state
+                projectCard.style.opacity = '0';
+                projectCard.style.transform = 'translateY(20px) scale(0.9)';
+                projectCard.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                
+                const memberCount = team.memberCount || team.members?.length || 0;
+                const maxMembers = team.maxMembers || 10;
+                const memberPercent = (memberCount / maxMembers) * 100;
+                
+                projectCard.innerHTML = `
+                    <div class="project-header">
+                        <h3>${team.name}</h3>
+                        <div class="project-status ${role === 'leader' ? 'leader-status' : 'member-status'}">
+                            <i class="fas ${role === 'leader' ? 'fa-crown' : 'fa-user'}"></i>
+                        </div>
+                    </div>
+                    <p class="team-description">${team.description || 'No description provided'}</p>
+                    <div class="badges">
+                        <span class="badge ${role === 'leader' ? 'team-leader' : 'team-member'}">${role === 'leader' ? 'Project Leader' : 'Project Member'}</span>
+                        <span class="team-code">Code: ${team.teamCode}</span>
+                    </div>
+                    <div class="team-info">
+                        <div class="member-progress">
+                            <div class="member-text">
+                                <small>Members: ${memberCount}/${maxMembers}</small>
+                                <small class="progress-percent">${Math.round(memberPercent)}%</small>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${memberPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="view-details">
+                            <i class="fas fa-arrow-right"></i>
+                            View Details
+                        </span>
+                    </div>
+                `;
+
+                // Enhanced click handler with loading animation
+                projectCard.style.cursor = 'pointer';
+                projectCard.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Add click animation
+                    projectCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        projectCard.style.transform = 'scale(1)';
+                    }, 150);
+                    
+                    // Show loading overlay on card
+                    const loadingOverlay = document.createElement('div');
+                    loadingOverlay.className = 'card-loading-overlay';
+                    loadingOverlay.innerHTML = '<div class="spinner"></div>';
+                    projectCard.appendChild(loadingOverlay);
+                    
+                    setTimeout(() => {
+                        // Store current project data for the analysis page
+                        const projectData = {
+                            id: team._id,
+                            name: team.name,
+                            description: team.description,
+                            teamCode: team.teamCode,
+                            role: role,
+                            memberCount: memberCount,
+                            maxMembers: maxMembers
+                        };
+                        
+                        // Store in sessionStorage for the analysis page to access
+                        sessionStorage.setItem('currentProject', JSON.stringify(projectData));
+                        
+                        if (role === 'leader') {
+                            window.location.href = `project_analysis_leader.html?project=${team._id}&role=${role}`;
+                        } else {
+                            window.location.href = `project_analysis_member.html?project=${team._id}&role=${role}`;
+                        }
+                    }, 500);
+                });
+
+                // Add hover effects
+                projectCard.addEventListener('mouseenter', () => {
+                    if (!projectCard.querySelector('.card-loading-overlay')) {
+                        projectCard.style.transform = 'translateY(-5px) scale(1.02)';
+                        projectCard.style.boxShadow = '0 8px 25px rgba(31, 173, 130, 0.2)';
+                    }
+                });
+
+                projectCard.addEventListener('mouseleave', () => {
+                    if (!projectCard.querySelector('.card-loading-overlay')) {
+                        projectCard.style.transform = 'translateY(0) scale(1)';
+                        projectCard.style.boxShadow = '';
+                    }
+                });
+
+                projectsContainer.appendChild(projectCard);
+                
+                // Animate card in
+                setTimeout(() => {
+                    projectCard.style.opacity = '1';
+                    projectCard.style.transform = 'translateY(0) scale(1)';
+                }, 50);
+                
+                console.log(`Added animated project card for: ${team.name}`);
+            }, index * 100); // Staggered animation delay
         });
-
-        projectsContainer.appendChild(projectCard);
-        console.log(`Added project card for: ${team.name}`);
-    });
+    }, 200);
 }
 
 // Show empty state when user has no projects
@@ -347,25 +449,62 @@ function showEmptyState() {
     const projectsContainer = document.getElementById('projectsContainer');
     if (!projectsContainer) return;
 
-    // Hide loading state
+    // Animated hide loading state
     const loadingState = document.getElementById('loadingState');
-    if (loadingState) loadingState.style.display = 'none';
+    if (loadingState) {
+        loadingState.style.opacity = '0';
+        loadingState.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            loadingState.style.display = 'none';
+        }, 200);
+    }
 
     projectsContainer.innerHTML = `
-        <div class="empty-state" style="text-align: center; padding: 3rem; color: #64748b;">
-            <i class="fa fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-            <h3>No Projects Yet</h3>
-            <p>Create a new project or join an existing one to get started!</p>
-            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
-                <button class="gradient-btn" onclick="document.getElementById('make_team').click()">
-                    <i class="fa-solid fa-plus"></i> Create Project
-                </button>
-                <button class="gradient-btn" onclick="document.getElementById('join_team').click()">
-                    <i class="fa-solid fa-users"></i> Join Project
-                </button>
+        <div class="empty-state">
+            <div class="empty-state-content">
+                <div class="empty-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="empty-title">Ready to Launch Your First Project?</h3>
+                <p class="empty-description">
+                    Your project dashboard is waiting! Create a new project or join an existing team to start collaborating.
+                </p>
+                <div class="empty-actions">
+                    <button class="cta-button primary" onclick="document.getElementById('make_team').click()">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Project</span>
+                        <div class="button-shine"></div>
+                    </button>
+                    <button class="cta-button secondary" onclick="document.getElementById('join_team').click()">
+                        <i class="fas fa-users"></i>
+                        <span>Join Team</span>
+                    </button>
+                </div>
+                <div class="empty-features">
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Track Progress</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-comments"></i>
+                        <span>Team Communication</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Task Management</span>
+                    </div>
+                </div>
             </div>
         </div>
     `;
+    
+    // Add entrance animation
+    setTimeout(() => {
+        const emptyState = projectsContainer.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.classList.add('animate-in');
+        }
+    }, 100);
 }
 
 function renderCalendar(month, year) {

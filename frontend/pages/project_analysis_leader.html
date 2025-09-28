@@ -11,26 +11,20 @@
   <script src="../assets/js/app.js"></script>
   <link rel="stylesheet" href="../assets/css/analysis.css">
   <link rel="stylesheet" href="../assets/css/project_analysis_leader_style.css">
+  <link rel="stylesheet" href="../assets/css/modern-sidebar.css">
+  <link rel="stylesheet" href="../assets/css/menu-button-fix.css">
 </head>
 <body>
 
   <!-- Sidebar -->
-  <button class="menu-btn" id="menuBtn"><i class="fa fa-bars" style="transform:scale(0.6);"></i></button>
   <div class="sidebar" id="sidebar">
-    <button class="close-btn" id="closeBtn" style="transform:scale(0.7);"><i class="fa fa-times"></i></button>
-    <h2>Team Leader Dashboard</h2>
-    
-    <!-- User Info Display -->
-    <div id="userInfo" style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;">
-      <small>Loading user info...</small>
-    </div>
-    
-    <a href="dashboard.html">Back to Projects</a>
-    <a href="profile.html">My Profile</a>
-    
-    <!-- Logout button -->
-  <button class="logout-btn" style="background: #d32f2f; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: auto; width: 100%;">Logout</button>
+    <!-- Modern sidebar will be populated by JavaScript -->
   </div>
+   <!-- Modern Menu button -->
+  <button class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></button>
+  
+  <!-- Sidebar overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
 
   <!-- Main -->
   <div class="main-content" style="margin-top:2.5rem;">
@@ -79,6 +73,11 @@
       </div>
     </div>
   </div>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/hamburger-menu.js"></script>
+  <script src="../assets/js/modern-sidebar.js"></script>
+  <script src="../assets/js/ai-chatbot.js"></script>
+
   <script src="../assets/js/project_analysis_leader.js"></script>
 </body>
 </html>
