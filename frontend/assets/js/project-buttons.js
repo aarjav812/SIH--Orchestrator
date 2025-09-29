@@ -81,6 +81,35 @@ document.addEventListener('DOMContentLoaded', function() {
             showJoinProjectDialog();
         });
     }
+    
+    // Add Deadline button
+    const addDeadlineBtn = document.getElementById('addBtn');
+    console.log('Add Deadline button found:', !!addDeadlineBtn); // Debug log
+    if (addDeadlineBtn) {
+        addDeadlineBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Add Deadline button clicked!'); // Debug log
+            showAddDeadlinePopup();
+        });
+    }
+    
+    // Save Deadline button
+    const saveDeadlineBtn = document.getElementById('saveBtn');
+    console.log('Save Deadline button found:', !!saveDeadlineBtn); // Debug log
+    if (saveDeadlineBtn) {
+        // Remove any existing listeners first
+        saveDeadlineBtn.onclick = null;
+        
+        saveDeadlineBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Save Deadline button clicked!'); // Debug log
+            saveDeadline();
+        });
+    }
+    
+    // Initialize deadline system
+    console.log('Initializing deadline system...'); // Debug log
+    initializeDeadlineSystem();
 });
 
 function showCreateProjectDialog() {
@@ -329,3 +358,344 @@ function showJoinProjectDialog() {
         }
     };
 }
+
+// Deadline Management System
+let deadlines = [];
+
+function initializeDeadlineSystem() {
+    console.log('initializeDeadlineSystem called'); // Debug log
+    
+    // Load existing deadlines from localStorage
+    const savedDeadlines = localStorage.getItem('userDeadlines');
+    if (savedDeadlines) {
+        deadlines = JSON.parse(savedDeadlines);
+        console.log('Loaded deadlines from localStorage:', deadlines); // Debug log
+    } else {
+        console.log('No saved deadlines found'); // Debug log
+    }
+    
+    // Initialize calendar
+    console.log('Updating calendar...'); // Debug log
+    updateCalendar();
+    
+    // Set up calendar click handlers
+    console.log('Setting up calendar handlers...'); // Debug log
+    setupCalendarClickHandlers();
+}
+
+function showAddDeadlinePopup() {
+    console.log('showAddDeadlinePopup called'); // Debug log
+    const popup = document.getElementById('popup');
+    console.log('Popup element found:', !!popup); // Debug log
+    
+    if (popup) {
+        // Force the popup to be visible with aggressive styling
+        popup.style.cssText = `
+            display: block !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            background: #1e293b !important;
+            padding: 2rem !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8) !important;
+            z-index: 999999999 !important;
+            color: white !important;
+            border: 2px solid #1fad82 !important;
+            min-width: 350px !important;
+            max-width: 500px !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        `;
+        
+        // Style the popup contents
+        const popupInputs = popup.querySelectorAll('input, button');
+        popupInputs.forEach(input => {
+            if (input.type === 'text' || input.type === 'date') {
+                input.style.cssText = `
+                    width: 100% !important;
+                    padding: 0.75rem !important;
+                    margin: 0.5rem 0 !important;
+                    border: 1px solid rgba(255,255,255,0.3) !important;
+                    background: rgba(255,255,255,0.1) !important;
+                    border-radius: 8px !important;
+                    color: white !important;
+                    font-size: 1rem !important;
+                `;
+            } else if (input.type === 'button' || input.tagName === 'BUTTON') {
+                input.style.cssText = `
+                    padding: 0.75rem 1.5rem !important;
+                    margin: 0.5rem 0.25rem !important;
+                    border: none !important;
+                    border-radius: 8px !important;
+                    cursor: pointer !important;
+                    font-weight: 500 !important;
+                    transition: all 0.2s ease !important;
+                `;
+                
+                if (input.id === 'saveBtn') {
+                    input.style.background = '#1fad82 !important';
+                    input.style.color = 'white !important';
+                } else {
+                    input.style.background = 'rgba(255,255,255,0.2) !important';
+                    input.style.color = 'white !important';
+                }
+            }
+        });
+        
+        // Style the h3 title
+        const title = popup.querySelector('h3');
+        if (title) {
+            title.style.cssText = `
+                color: white !important;
+                margin: 0 0 1rem 0 !important;
+                font-size: 1.5rem !important;
+                text-align: center !important;
+            `;
+        }
+        
+        // Clear previous inputs
+        const taskInput = document.getElementById('task');
+        const dateInput = document.getElementById('date');
+        if (taskInput) {
+            taskInput.value = '';
+            console.log('Task input cleared'); // Debug log
+        }
+        if (dateInput) {
+            dateInput.value = '';
+            console.log('Date input cleared'); // Debug log
+        }
+        
+        // Focus on task input
+        setTimeout(() => {
+            if (taskInput) {
+                taskInput.focus();
+                console.log('Task input focused'); // Debug log
+            }
+        }, 100);
+        
+        console.log('Popup should now be visible'); // Debug log
+    } else {
+        console.error('Popup element not found!'); // Debug log
+        showAlert('Error: Popup element not found on page', 'error');
+    }
+}
+
+function closePopup() {
+    const popup = document.getElementById('popup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+function saveDeadline() {
+    console.log('saveDeadline called'); // Debug log
+    const taskInput = document.getElementById('task');
+    const dateInput = document.getElementById('date');
+    
+    console.log('Task input found:', !!taskInput); // Debug log
+    console.log('Date input found:', !!dateInput); // Debug log
+    
+    if (!taskInput || !dateInput) {
+        console.error('Cannot find deadline form inputs'); // Debug log
+        showAlert('Error: Cannot find deadline form inputs', 'error');
+        return;
+    }
+    
+    const task = taskInput.value.trim();
+    const date = dateInput.value;
+    
+    console.log('Task value:', task); // Debug log
+    console.log('Date value:', date); // Debug log
+    
+    if (!task) {
+        showAlert('Please enter a task description', 'error');
+        return;
+    }
+    
+    if (!date) {
+        showAlert('Please select a date', 'error');
+        return;
+    }
+    
+    // Create deadline object
+    const deadline = {
+        id: Date.now(),
+        task: task,
+        date: date,
+        completed: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    console.log('Creating deadline:', deadline); // Debug log
+    
+    // Add to deadlines array
+    deadlines.push(deadline);
+    
+    // Save to localStorage
+    localStorage.setItem('userDeadlines', JSON.stringify(deadlines));
+    console.log('Saved to localStorage:', deadlines); // Debug log
+    
+    // Update calendar display
+    updateCalendar();
+    
+    // Close popup
+    closePopup();
+    
+    // Show success message
+    showAlert(`Deadline "${task}" added for ${formatDate(date)}`, 'success');
+}
+
+function updateCalendar() {
+    const calendarDays = document.getElementById('calendarDays');
+    if (!calendarDays) return;
+    
+    // Get current date info
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startDay = firstDay.getDay();
+    
+    // Clear existing days
+    calendarDays.innerHTML = '';
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarDays.appendChild(emptyDay);
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+        
+        // Check if this day has deadlines
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayDeadlines = deadlines.filter(d => d.date === dateStr);
+        
+        if (dayDeadlines.length > 0) {
+            dayElement.classList.add('has-deadline');
+            dayElement.style.cssText = `
+                background: rgba(31, 173, 130, 0.2);
+                border: 2px solid #1fad82;
+                color: #1fad82;
+                font-weight: bold;
+                cursor: pointer;
+            `;
+            
+            // Add click handler to show deadlines
+            dayElement.addEventListener('click', () => showDayDeadlines(dateStr, dayDeadlines));
+        }
+        
+        // Highlight today
+        if (day === now.getDate() && currentMonth === now.getMonth() && currentYear === now.getFullYear()) {
+            dayElement.classList.add('today');
+            if (!dayDeadlines.length) {
+                dayElement.style.cssText = `
+                    background: rgba(59, 130, 246, 0.2);
+                    border: 2px solid #3b82f6;
+                    color: #3b82f6;
+                    font-weight: bold;
+                `;
+            }
+        }
+        
+        calendarDays.appendChild(dayElement);
+    }
+}
+
+function setupCalendarClickHandlers() {
+    // Update calendar header with current month/year
+    const calendarHeader = document.querySelector('.calendar header h3');
+    if (calendarHeader) {
+        const now = new Date();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+        calendarHeader.textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+    }
+}
+
+function showDayDeadlines(date, dayDeadlines) {
+    const modal = document.getElementById('modal');
+    const taskDate = document.getElementById('taskDate');
+    const taskDetail = document.getElementById('taskDetail');
+    
+    if (modal && taskDate && taskDetail) {
+        taskDate.textContent = formatDate(date);
+        
+        let detailsHTML = '<div style="text-align: left;">';
+        dayDeadlines.forEach((deadline, index) => {
+            detailsHTML += `
+                <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 3px solid #1fad82;">
+                    <div style="font-weight: bold; margin-bottom: 0.25rem;">${deadline.task}</div>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">
+                        Added: ${formatDate(deadline.createdAt.split('T')[0])}
+                        <button onclick="removeDeadline(${deadline.id})" style="
+                            float: right; background: #ef4444; color: white; border: none; 
+                            padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer;
+                            font-size: 0.75rem;
+                        ">Remove</button>
+                    </div>
+                </div>
+            `;
+        });
+        detailsHTML += '</div>';
+        
+        taskDetail.innerHTML = detailsHTML;
+        modal.style.display = 'flex';
+        
+        // Close modal handler
+        const closeModalBtn = document.getElementById('closeModal');
+        if (closeModalBtn) {
+            closeModalBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+        
+        // Close on overlay click
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+}
+
+function removeDeadline(deadlineId) {
+    deadlines = deadlines.filter(d => d.id !== deadlineId);
+    localStorage.setItem('userDeadlines', JSON.stringify(deadlines));
+    updateCalendar();
+    
+    // Close modal
+    const modal = document.getElementById('modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    
+    showAlert('Deadline removed successfully', 'success');
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Make closePopup and removeDeadline available globally
+window.closePopup = closePopup;
+window.removeDeadline = removeDeadline;
